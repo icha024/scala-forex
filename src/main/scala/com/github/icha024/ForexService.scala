@@ -63,7 +63,7 @@ trait ForexService extends HttpService {
   def convertFromCachedCurrencyMap(baseCurrency: String, targetCurrency: String, currencyAmount: String = "1.0"): Route =
     onSuccess(
       cachedFetchCurrencies.map(
-        currencyMap => calculateRate(currencyMap, baseCurrency, targetCurrency, currencyAmount)))(result => complete(result))
+        currencyMap => calculateRate(currencyMap, baseCurrency.toUpperCase, targetCurrency.toUpperCase, currencyAmount)))(result => complete(result))
 
   def calculateRate(currencyMap: Map[String, Double], baseCurrency: String, targetCurrency: String, currencyAmount: String): String = {
     Try((currencyMap(targetCurrency) / currencyMap(baseCurrency) * currencyAmount.toDouble).toString) recover {
@@ -83,8 +83,8 @@ trait ForexService extends HttpService {
     pipeline(
       Get(
         Uri(
-          "https://s3-eu-west-1.amazonaws.com/web-dist/eurofxref-daily.xml" // Test URL
-          // "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"  // Live URL
+          // "https://s3-eu-west-1.amazonaws.com/web-dist/eurofxref-daily.xml" // Test URL
+          "https://www.ecb.europa.eu/stats/eurofxref/eurofxref-daily.xml"  // Live URL
         )
       )
     ) map { response =>
